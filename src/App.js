@@ -1,10 +1,12 @@
+/* global gapi */
+
 import './App.css';
 import React, { useEffect } from "react";
 import WritePage from "./pages/WritePage";
 import LandingPage from "./pages/LandingPage";
 import MyPage from "./pages/MyPage";
 import AboutPage from "./pages/AboutPage";
-import SideBar from "./component/SideBar";
+import GuidePage from "./pages/GuidePage";
 import Footer from "./component/Footer";
 import {
   Switch,
@@ -13,14 +15,17 @@ import {
   Redirect
 } from "react-router-dom";
 import { useSelector } from 'react-redux';
+
 require("dotenv").config();
 
 export default function App() {
   useEffect(() => {
-    gapi.load('auth2', function() {
-      gapi.auth2.init({
+    window.gapi.load('auth2', function() {
+      console.log('gapi loading')
+      window.gapi.auth2.init({
         client_id: process.env.REACT_APP_GOOGLE_OAUTH_CODE
       })
+      .then(() => console.log('gapi initialized'))
     });
   }, [])
 
@@ -34,7 +39,7 @@ export default function App() {
     let scrollPos = 0;
     window.addEventListener('scroll', function() {
       //scroll up -> show nav
-      if ((document.body.getBoundingClientRect()).top > scrollPos)
+      if ((document.body.getBoundingClientRect()).top > scrollPos - 1)
       document.querySelector('.side-bar').style.top = '0';
       //scroll down -> hide nav
       else
@@ -42,6 +47,14 @@ export default function App() {
       scrollPos = (document.body.getBoundingClientRect()).top;
     });
   }, [])
+
+  useEffect(() => {
+    const pathName = window.location.pathname;
+    window.scrollTo({
+      top: 0,
+      left: 0
+    })
+  , [pathName]})
 
   const { isSignIn, userId } = useSelector(state => state);
   
@@ -51,7 +64,8 @@ export default function App() {
         <Route
             exact path='/'
             render={() => {
-              return <Redirect to='/main?sort=date' />;
+              // return <Redirect to='/main?sort=date' />;
+              return <GuidePage></GuidePage>
             }
           }
         />

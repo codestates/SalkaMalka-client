@@ -2,13 +2,9 @@ import React from "react";
 import Logo from "./Logo";
 import Search from "./Search";
 import Profile from "./Profile";
-import { useHistory } from "react-router";
-import { useSelector } from 'react-redux';
 
-export default function SideBar(props) {
+export default function SideBar() {
   const pathName = window.location.pathname
-  const history = useHistory();
-  const { userId } = useSelector(state => state);
 
   if (pathName === '/main' || pathName === '/search') {
     return (

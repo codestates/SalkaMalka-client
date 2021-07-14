@@ -1,14 +1,21 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import logo from "../logo/SalkaMalka_logo_crop.png";
+import logoCrop from "../logo/SalkaMalka_logo_crop.png";
+import logoSquare from "../logo/SalkaMalka_logo_square.png";
 
 export default function Logo(props) {
   const history = useHistory();
+  const pathName = window.location.pathname;
   const backToHome = () => {
-    history.push('/');
+    history.push('/main?sort=date');
   }
-
-  return (
-    <img src={logo} alt="logo" onClick={() => backToHome()}/>
-  )
+  if (pathName === '/main') {
+    return (
+      <img id='logo-crop' src={logoCrop} alt="logo" onClick={() => backToHome()}/>
+    )
+  } else {
+    return (
+      <img id='logo-square' src={logoSquare} alt="logo" onClick={() => backToHome()}/>
+    ) 
+  }
 }

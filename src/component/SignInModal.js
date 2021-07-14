@@ -235,7 +235,7 @@ export default function SignInModal(props) {
       </div>
       </div>
       <div id='change-section' onClick={() => { setSectionType('signUp') }}>
-        <span>살까말까에 가입할래요 </span>
+        <span>회원가입할래요 </span>
         <FontAwesomeIcon icon={faArrowRight} />
       </div>
     </div>

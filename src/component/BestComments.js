@@ -6,10 +6,13 @@ export default function BestCommentSection({ bestSara, bestMara, type, isOpen, s
     if (type === 'sara') return bestSara;
     else return bestMara;
   }
-  
+
   const sliceBestComment = (content) => {
-    if (content.length < 50) return content;
-    return content.slice(0,50) + ' (...)'
+    if (content.length < 50) return <div className={'comment-item-content'}>{content}</div>;
+    return (<div className={'comment-item-content'}>
+      {content.slice(0,50)}
+      <span>{' ( ... )'}</span>
+    </div>)
   }
 
   return (

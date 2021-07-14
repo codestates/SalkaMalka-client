@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faBookmark as farfaBookmark } from '@fortawesome/free-regular-svg-icons'
 import { faBookmark as fasfaBookmark } from '@fortawesome/free-solid-svg-icons'
 import { useSelector, useDispatch } from 'react-redux';
-import { setBookmarks, setPosts, setClosed } from '../actions/index';
+import { setBookmarks, setPosts, setClosed, setAccessToken } from '../actions/index';
 import { useHistory } from "react-router";
 import axios from 'axios';
 
@@ -13,6 +13,19 @@ export default function PostButtonCenter(props) {
   const dispatch = useDispatch();
   const { userId, bookmarks, isSignIn, accessToken } = useSelector(state => state);
   
+  const refreshtoken = (e) => {
+    if (e.response && e.response.status === 401) {
+      alert('토큰이 만료되어 재발급해 드릴게요.');
+      axios
+      .post(process.env.REACT_APP_API_ENDPOINT + '/auth/refreshtoken', {}, {
+        withCredentials: true,
+      })
+      .then(res => dispatch(setAccessToken(res.data.accessToken)))
+      .then(() => alert('새로운 토큰을 발급받았어요. 다시 시도해 주세요.'))
+      .catch(e => console.log(e));
+    }
+  }
+
   const handlePostDelete = () => {
     if (confirm('살까말까를 삭제하면 더이상 사라마라를 받을 수 없어요')) {
       axios
@@ -41,7 +54,7 @@ export default function PostButtonCenter(props) {
             }
           }
         })
-        .catch(e => console.log(e));
+        .catch(e => refreshtoken(e));
     } else {
       return;
     }
@@ -70,7 +83,7 @@ export default function PostButtonCenter(props) {
             window.location.reload(false);
           }
         })
-        .catch(e => console.log(e));
+        .catch(e => refreshtoken(e));
     } else {
       return;
     }
@@ -98,7 +111,7 @@ export default function PostButtonCenter(props) {
         alert(res.data);
         dispatch(setBookmarks([...bookmarks, props.postId]));
       })
-      .catch(e => console.log(e));
+      .catch(e => refreshtoken(e));
   }
 
   const handleUnBookmark = () => {
@@ -118,7 +131,7 @@ export default function PostButtonCenter(props) {
         bms.splice(bms.indexOf(props.postId), 1);
         dispatch(setBookmarks(bms));
       })
-      .catch(e => console.log(e));
+      .catch(e => refreshtoken(e));
   }
 
   if (userId === props.userId) { // 내 글: 닫기+삭제 or 삭제

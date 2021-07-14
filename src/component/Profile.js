@@ -4,13 +4,14 @@ import SignInModal from './SignInModal.js'
 import axios from "axios";
 import { useSelector, useDispatch } from 'react-redux';
 import persistor from '../index';
-import { setAccessToken } from '../actions/index';
+import { setAccessToken, setGuideOpen } from '../actions/index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
 require("dotenv").config();
 
 export default function Profile() {
+  const pathName = window.location.pathname;
   const history = useHistory();
   const dispatch = useDispatch();
   const [isModalOpen, modalOpenset] = useState(false);
@@ -84,49 +85,49 @@ export default function Profile() {
             handleSocialSignout();
           })
           .then(() => persistor.purge())
-          .then(() => history.push('/'))
+          .then(() => history.push('/main?sort=date'))
         })
         .catch(e => console.log(e));
       }
     });
   }
 
-  const options = () => {
-    if (isSignIn) {
-      return ['Write', 'My Page', 'Log Out'];
-    }
-    else {
-      return['Log In'];
-    }
-  }
-
-  const activeButton = (el) => {
-    if (el === 'Log In') {
-      openModal();
-    }
-    else if (el === 'Log Out') {
-      handleSignout();
-    }
-    else if (el === 'Write') {
-      history.push('/posts');
-    }
-    else if (el === 'My Page') {
-      history.push(`/users/${userId}`);
-    }
-  }
-
-  return (
-    <div className='profile'>
-      <div id='to-about-page' onClick={() => {history.push('/about')}}>About</div>
-      <FontAwesomeIcon id='menu' icon={faBars} />
-      <div className={'menu-open'}>
-        {options().map(el => <div key={el} onClick={() => activeButton(el)}>{el}</div>)}
+  if (pathName === '/') {
+    return (
+      <div className='profile'>
       </div>
-      <SignInModal
-        isModalOpen={isModalOpen}
-        openModal={openModal}
-        closeModal={closeModal}
-      ></SignInModal>
-    </div>
-  )
+    )
+  }
+  else if (isSignIn) {
+    return (
+      <div className='profile'>
+        <div id='to-about-page' onClick={() => {history.push('/about')}}>About</div>
+        <FontAwesomeIcon id='menu' icon={faBars} />
+        <div className={'menu-open'}>
+          <div onClick={() => history.push('/posts')}>Write</div>
+          <div onClick={() => history.push(`/users/${userId}`)}>My Page</div>
+          <div onClick={handleSignout}>Log Out</div>
+        </div>
+        <SignInModal
+          isModalOpen={isModalOpen}
+          openModal={openModal}
+          closeModal={closeModal}
+        ></SignInModal>
+      </div>
+    )
+  }
+  else {
+    return (
+      <div className='profile'>
+        <div id='to-guide-modal' onClick={() => {dispatch(setGuideOpen(true))}}>Guide</div>
+        <div id='to-about-page' onClick={() => {history.push('/about')}}>About</div>
+        <div id='to-signup-modal' onClick={openModal}>Log In</div>
+        <SignInModal
+          isModalOpen={isModalOpen}
+          openModal={openModal}
+          closeModal={closeModal}
+        ></SignInModal>
+      </div>
+    )
+  }
 }

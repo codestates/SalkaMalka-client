@@ -8,10 +8,10 @@ export default function CommentList(props) {
   return (
     <div className={'comment-display'}>
       <div className={'like-comment-display'}>
-        {sara.map((el) => {
+        {sara.map((el,idx) => {
           return (
             <CommentListItem
-              key={el._id}
+              key={idx}
               type={el.type}
               content={el.content}
               like={el.like}
@@ -27,10 +27,10 @@ export default function CommentList(props) {
         })}
       </div>
       <div className={'dislike-comment-display'}>
-        {mara.map((el) => {
+        {mara.map((el,idx) => {
           return (
             <CommentListItem
-              key={el._id}
+              key={idx}
               type={el.type}
               content={el.content}
               like={el.like}

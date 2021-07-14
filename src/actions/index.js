@@ -1,3 +1,5 @@
+import { initialState } from "../reducers/initialState";
+
 // action types
 export const SIGNIN = "SIGNIN";
 export const SETACCESSTOKEN = "SETACCESSTOKEN";
@@ -7,6 +9,9 @@ export const SETPOSTS = "SETPOSTS";
 export const SETCOMMENTS = "SETCOMMENTS";
 export const SETCLOSED = "SETCLOSED";
 export const SETREPLIED = "SETREPLIED";
+export const SETGUIDEOPEN = "SETGUIDEOPEN";
+export const SETWRITEOPEN = "SETWRITEOPEN";
+export const SETDISPLAYOPEN = "SETDISPLAYOPEN"
 
 export const userSignIn = (data) => {
   const { email, userId, accessToken, provider, bookmarks } = data;
@@ -87,3 +92,12 @@ export const setReplied = (posts) => {
     }
   }
 } 
+
+export const setGuideOpen = (boolean) => {
+  return {
+    type: SETGUIDEOPEN,
+    payload: {
+      isGuideOpen: boolean
+    }
+  }
+}
