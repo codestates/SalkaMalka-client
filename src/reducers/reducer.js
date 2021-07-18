@@ -8,8 +8,10 @@ import {
   SETCLOSED,
   SETREPLIED,
   SETGUIDEOPEN,
-  SETWRITEOPEN,
-  SETDISPLAYOPEN
+  SETKING,
+  SETLOADING,
+  SETALERTOPEN,
+  ISTRIAL
 } from "../actions/index";
 import { initialState } from "./initialState";
 import { PURGE } from "redux-persist";
@@ -41,6 +43,14 @@ const reducer = (state = initialState, action) => {
         repliedPosts: arr.filter((el, index) => arr.indexOf(el) === index)
       });
     case SETGUIDEOPEN:
+      return Object.assign({}, state, action.payload);
+    case SETKING:
+      return Object.assign({}, state, action.payload);
+    case SETLOADING:
+      return Object.assign({}, state, action.payload);
+    case SETALERTOPEN:
+      return Object.assign({}, state, action.payload);
+    case ISTRIAL:
       return Object.assign({}, state, action.payload);
 
     default:

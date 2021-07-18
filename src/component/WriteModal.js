@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from 'react-redux';
-import { setReplied } from '../actions/index';
+import { setReplied, setAlertOpen } from '../actions/index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
@@ -8,7 +8,6 @@ require("dotenv").config();
 
 
 export default function WriteModal({ postId, saraMara, isCommentModalOpen, setCommentModalOpen, setSara, setMara, setCommentList }) {
-  console.log({ postId, saraMara })
   const dispatch = useDispatch();
   const { userId } = useSelector(state => state);
 
@@ -30,7 +29,9 @@ export default function WriteModal({ postId, saraMara, isCommentModalOpen, setCo
       .then(() => setCommentModalOpen(false))
       .then(() => dispatch(setReplied([postId])))
       .catch(e => {
-        if (e.response && (e.response.status === 404 || e.response.status === 409)) alert(e.response.data);
+        if (e.response && (e.response.status === 404 || e.response.status === 409)) {
+          dispatch(setAlertOpen(true, e.response.data))
+        }
       });
   }
 

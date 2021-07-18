@@ -3,7 +3,6 @@ import PostCase from './PostCase.js'
 import Nothing from './Nothing';
 
 export default function MyBookMarkContent(props) {
-  // console.log(props)
   return (
     !props.displayData.length ? 
       <Nothing whatIsDisplayed={props.whatIsDisplayed}></Nothing>

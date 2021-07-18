@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import CommentListItem from "./CommentListItem";
 import PostCase from "./PostCase";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import axios from "axios";
-import CommentList from "./CommentList";
 import Nothing from './Nothing';
+import { setAlertOpen } from '../actions/index';
 
 export default function MyCommentContent(props) {
-  // console.log(props)
+  const dispatch = useDispatch();
   const [isOpenPost, setOpenPost] = useState(false);
   const [postInfo, setPostInfo] = useState({});
   const [isInMyComment, setInMyComment] = useState(true);
@@ -17,16 +17,26 @@ export default function MyCommentContent(props) {
   const { accessToken } = useSelector(state => state);
   const [checkedItems, setChecktedItems] = useState([]);
   const [isAllChecked, setIsAllChecked] = useState(false)
-  // console.log(comments)
   const [commentList, setCommentList] = useState(props.displayData)
 
+  const refreshtoken = (e) => {
+    if (e.response && e.response.status === 401) {
+      dispatch(setAlertOpen(true, '토큰이 만료되어 재발급해 드릴게요.'))
+      axios
+        .post(process.env.REACT_APP_API_ENDPOINT + '/auth/refreshtoken', {}, {
+          withCredentials: true,
+        })
+        .then(res => dispatch(setAccessToken(res.data.accessToken)))
+        .then(() => { dispatch(setAlertOpen(true, '새로운 토큰을 발급받았어요. 다시 시도해 주세요.')) })
+        .catch(e => console.log(e));
+    }
+  }
+  
   useEffect(() => {
-    // console.log(commentList)
     document.querySelectorAll('.checkbox-one').forEach(checkbox => {
       if (checkbox.checked) checkbox.click();
     })
   }, [commentList])
-  useEffect(() => console.log(checkedItems), [checkedItems])
 
   const checkedItemHandler = (value, isChecked) => {
     const commentInfo = {
@@ -45,7 +55,6 @@ export default function MyCommentContent(props) {
   }
 
   const allCheckedHandler = (isChecked) => {
-    console.log(isChecked)
     if (isChecked.target.checked) {
       setChecktedItems([])
       setChecktedItems(props.displayData.map((el) => {
@@ -62,28 +71,31 @@ export default function MyCommentContent(props) {
     }
   }
 
-  // console.log(commentList)
-
   const deleteComment = async () => {
-    await checkedItems.forEach((el) => {
-      axios
-        .delete(process.env.REACT_APP_API_ENDPOINT + '/posts/' + el.postId + '/comments/' + el.commentId,
-          {
-            headers: {
-              'Authorization': `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-            withCredentials: true,
-          }
-        )
-        .then((res) => {
-        setCommentList(res.data.userComments)
-        })
-        .then(() => {
-          setChecktedItems([])
-          setIsAllChecked(false)
-        })
-    })
+    if (confirm('사라마라를 삭제할까요?')) {
+      await checkedItems.forEach((el) => {
+        axios
+          .delete(process.env.REACT_APP_API_ENDPOINT + '/posts/' + el.postId + '/comments/' + el.commentId,
+            {
+              headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+              },
+              withCredentials: true,
+            }
+          )
+          .then((res) => {
+          setCommentList(res.data.userComments)
+          })
+          .then(() => {
+            setChecktedItems([])
+            setIsAllChecked(false)
+          })
+          .catch(e => refreshtoken(e))
+      })
+    } else {
+      return;
+    }
   }
 
   if (!isOpenPost) {
@@ -95,6 +107,7 @@ export default function MyCommentContent(props) {
           <div className='check-all'>
             <input id='checkbox-all' type='checkbox' checked={isAllChecked} onChange={(e) => allCheckedHandler(e)}></input>
             <button onClick={deleteComment}>체크된 댓글 삭제</button>
+            <div>댓글을 클릭하면 포스트로 이동합니다</div>
           </div>
           {commentList.map((el,idx) => {
             if (comments.includes(el.commentId)) {

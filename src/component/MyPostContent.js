@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 import Nothing from './Nothing';
 
 export default function MyPostContent(props) {
-  // console.log(props)
   const { openPosts, closedPosts } = useSelector(state => state);
   const displayData = props.displayData.filter(el => [...openPosts, ...closedPosts].includes(el._id));
+
   return (
     !displayData.length ?
       <Nothing whatIsDisplayed={props.whatIsDisplayed}></Nothing>

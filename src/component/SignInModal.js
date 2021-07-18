@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import axios from 'axios';
 import { GoogleLogin } from 'react-google-login';
-import { userSignIn, setReplied } from '../actions/index';
-import { useDispatch } from 'react-redux';
+import { userSignIn, setReplied, setAlertOpen } from '../actions/index';
+import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes, faArrowLeft, faArrowRight, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 require("dotenv").config();
 
 export default function SignInModal(props) {
-  const history = useHistory();
   const dispatch = useDispatch();
   const [sectionType, setSectionType] = useState('signIn');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [checkPassword, setCheckPassword] = useState('');
   const emailRegex = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[a-zA-Z]+\.[a-zA-Z]+$/i;
-  const passwordRegex = /^[0-9a-zA-Z]/i;
-  //10자 이상 대문자+소문자+숫자+특문?
-  //const passwordRegex = //i;
+  const passwordRegex = /^[0-9a-zA-Z].{7,32}/i;
   const [matchErr, setMatchErr] = useState('');
   const [passwordErr, setPasswordErr] = useState('');
   const [emailErr, setEmailErr] = useState('');
@@ -40,7 +36,7 @@ export default function SignInModal(props) {
     if (checkPW || !password.length) {
       setPasswordErr('');
     } else if (!checkPW) {
-      setPasswordErr('비밀번호 형식에 맞지 않습니다.');
+      setPasswordErr('8~32자 사이의 영문 혹은 숫자만 허용됩니다.');
     }
   }, [password])
 
@@ -48,7 +44,6 @@ export default function SignInModal(props) {
     if (password === checkPassword) {
       setMatchErr('');
     } else if (password !== checkPassword) {
-      console.log(password, checkPassword)
       setMatchErr('비밀번호가 일치하지 않습니다.');
     }
   }, [password, checkPassword])
@@ -80,7 +75,6 @@ export default function SignInModal(props) {
   }
 
   const signInHandler = (email, password) => {
-    console.log(email, password);
     if (!email || !password) {
       setAllErr('이메일과 비밀번호 모두 입력하세요.');
     } else {
@@ -88,7 +82,8 @@ export default function SignInModal(props) {
       axios
       .post(process.env.REACT_APP_API_ENDPOINT + '/auth/signin',
       {
-        email, password
+        email,
+        password
       },
       {
         'Content-Type': 'application/json',
@@ -106,6 +101,7 @@ export default function SignInModal(props) {
         dispatch(userSignIn(data));
         props.closeModal();
         getRepliedPosts(data.userId, data.accessToken);
+        dispatch(setAlertOpen(true, `${res.data.email}님, 반가워요!`))
       })
       .catch(e => {
         if (e.response && e.response.status === 404) {
@@ -120,18 +116,15 @@ export default function SignInModal(props) {
       setAllErr('이메일과 비밀번호 모두 입력하세요.');
     } else {
       setAllErr('');
-      console.log(emailErr, matchErr, passwordErr)
       if (emailErr === ''
       && matchErr === ''
       && passwordErr === '') {
-        console.log({email, password})
         axios
         .post(process.env.REACT_APP_API_ENDPOINT + '/auth/signup',
         {
           email, password
         })
         .then(res => {
-          console.log('회원가입에 성공하였습니다.');
           setSectionType('signIn');
         })
         .catch(e => {
@@ -144,7 +137,6 @@ export default function SignInModal(props) {
   }
 
   function googleHandler(response) {
-    console.log(response)
     axios
     .post(process.env.REACT_APP_API_ENDPOINT + '/auth/signin/google',
     {},
@@ -156,7 +148,6 @@ export default function SignInModal(props) {
       withCredentials: true,
     })
     .then(res => {
-      console.log(res.data)
       const data = {
         email: res.data.email,
         userId: res.data.userId,
@@ -167,6 +158,7 @@ export default function SignInModal(props) {
       dispatch(userSignIn(data));
       getRepliedPosts(data.userId, data.accessToken);
       props.closeModal();
+      dispatch(setAlertOpen(true, `${res.data.email}님, 반가워요!`))
     })
     .catch(e => console.log(e));
   }
@@ -196,6 +188,7 @@ export default function SignInModal(props) {
             dispatch(userSignIn(data));
             getRepliedPosts(data.userId, data.accessToken);
             props.closeModal();
+            dispatch(setAlertOpen(true, `${res.data.email}님, 반가워요!`))
           })
           .catch(e => console.log(e));
         },

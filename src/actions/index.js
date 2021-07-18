@@ -1,5 +1,3 @@
-import { initialState } from "../reducers/initialState";
-
 // action types
 export const SIGNIN = "SIGNIN";
 export const SETACCESSTOKEN = "SETACCESSTOKEN";
@@ -10,12 +8,13 @@ export const SETCOMMENTS = "SETCOMMENTS";
 export const SETCLOSED = "SETCLOSED";
 export const SETREPLIED = "SETREPLIED";
 export const SETGUIDEOPEN = "SETGUIDEOPEN";
-export const SETWRITEOPEN = "SETWRITEOPEN";
-export const SETDISPLAYOPEN = "SETDISPLAYOPEN"
+export const SETKING = "SETKING";
+export const SETLOADING = "SETLOADING"
+export const SETALERTOPEN = "SETALERTOPEN"
+export const ISTRIAL = "ISTRIAL"
 
 export const userSignIn = (data) => {
   const { email, userId, accessToken, provider, bookmarks } = data;
-  console.log(data)
   return {
     type: SIGNIN,
     payload: {
@@ -98,6 +97,43 @@ export const setGuideOpen = (boolean) => {
     type: SETGUIDEOPEN,
     payload: {
       isGuideOpen: boolean
+    }
+  }
+}
+
+export const setKing = (userId) => {
+  return {
+    type: SETKING,
+    payload: {
+      king: userId
+    }
+  }
+}
+
+export const setLoading = (boolean) => {
+  return {
+    type: SETLOADING,
+    payload: {
+      isLoading: boolean
+    }
+  }
+}
+
+export const setAlertOpen = (boolean, message) => {
+  return {
+    type: SETALERTOPEN,
+    payload: {
+      isAlertOpen: boolean,
+      alertMessage : message
+    }
+  }
+}
+
+export const setTrial = (boolean) => {
+  return {
+    type: SETTRIAL,
+    payload: {
+      isTrial: boolean
     }
   }
 }

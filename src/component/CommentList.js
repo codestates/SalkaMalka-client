@@ -2,9 +2,8 @@ import React from "react";
 import CommentListItem from "./CommentListItem";
 
 export default function CommentList(props) {
-  const sara = props.comment.filter(i => i.type === 'sara');
-  const mara = props.comment.filter(i => i.type === 'mara');
-
+  const sara = props.commentList.filter(i => i.type === 'sara');
+  const mara = props.commentList.filter(i => i.type === 'mara');
   return (
     <div className={'comment-display'}>
       <div className={'like-comment-display'}>
@@ -13,6 +12,8 @@ export default function CommentList(props) {
             <CommentListItem
               key={idx}
               type={el.type}
+              isCloseState={props.isCloseState}
+              setChosenComment={props.setChosenComment}
               content={el.content}
               like={el.like}
               isDisplayCommentModal={props.isDisplayCommentModal}
@@ -21,6 +22,7 @@ export default function CommentList(props) {
               commentId={el._id}
               userId={el.userId}
               isOpen={props.isOpen}
+              commentList={props.commentList}
               setCommentList={props.setCommentList}
             ></CommentListItem>
           )
@@ -32,6 +34,8 @@ export default function CommentList(props) {
             <CommentListItem
               key={idx}
               type={el.type}
+              isCloseState={props.isCloseState}
+              setChosenComment={props.setChosenComment}
               content={el.content}
               like={el.like}
               isDisplayCommentModal={props.isDisplayCommentModal}
@@ -40,6 +44,7 @@ export default function CommentList(props) {
               commentId={el._id}
               userId={el.userId}
               isOpen={props.isOpen}
+              commentList={props.commentList}
               setCommentList={props.setCommentList}
             ></CommentListItem>
           )

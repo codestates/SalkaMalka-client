@@ -3,6 +3,9 @@ import SideBar from "../component/SideBar";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import logo from "../logo/SalkaMalka_logo_crop.png";
+import whdid502 from "../logo/whdid502.jpg";
+import johnbunnyan from "../logo/johnbunnyan.jpg";
+import sparklingwater226 from "../logo/sparklingwater226.jpeg";
 
 export default function AboutPage() {
   return (
@@ -57,7 +60,7 @@ export default function AboutPage() {
           <div className='about-troika'>
             <div className='team-member'>
               <div className="ap-img-box">
-                <img className={'ap-img'} src={''}></img>
+                <img className={'ap-img'} src={sparklingwater226}></img>
               </div>
               <div className='team-member-name'>도하영</div>
               <div>팀장, Full-stack</div>
@@ -68,7 +71,7 @@ export default function AboutPage() {
             </div>
             <div className='team-member'>
               <div className="ap-img-box">
-                <img className={'ap-img'} src={''}></img>
+                <img className={'ap-img'} src={whdid502}></img>
               </div>
               <div className='team-member-name'>조양권</div>
               <div>팀원, Front-end</div>
@@ -79,7 +82,7 @@ export default function AboutPage() {
             </div>
             <div className='team-member'>
               <div className="ap-img-box">
-                <img className={'ap-img'} src={''}></img>
+                <img className={'ap-img'} src={johnbunnyan}></img>
               </div>
               <div className='team-member-name'>정상규</div>
               <div>팀원, Back-end</div>

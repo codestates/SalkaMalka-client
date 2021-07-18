@@ -6,28 +6,29 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setBookmarks, setPosts, setClosed, setAccessToken } from '../actions/index';
 import { useHistory } from "react-router";
 import axios from 'axios';
+import { setAlertOpen } from '../actions/index';
+
 
 export default function PostButtonCenter(props) {
   const pathName = window.location.pathname;
-  const history = useHistory();
   const dispatch = useDispatch();
-  const { userId, bookmarks, isSignIn, accessToken } = useSelector(state => state);
-  
+  const { userId, bookmarks, isSignIn, accessToken, openPosts, closedPosts } = useSelector(state => state);
+
   const refreshtoken = (e) => {
     if (e.response && e.response.status === 401) {
-      alert('토큰이 만료되어 재발급해 드릴게요.');
+      dispatch(setAlertOpen(true, '토큰이 만료되어 재발급해 드릴게요.'))
       axios
-      .post(process.env.REACT_APP_API_ENDPOINT + '/auth/refreshtoken', {}, {
-        withCredentials: true,
-      })
-      .then(res => dispatch(setAccessToken(res.data.accessToken)))
-      .then(() => alert('새로운 토큰을 발급받았어요. 다시 시도해 주세요.'))
-      .catch(e => console.log(e));
+        .post(process.env.REACT_APP_API_ENDPOINT + '/auth/refreshtoken', {}, {
+          withCredentials: true,
+        })
+        .then(res => dispatch(setAccessToken(res.data.accessToken)))
+        .then(() => { dispatch(setAlertOpen(true, '새로운 토큰을 발급받았어요. 다시 시도해 주세요.')) })
+        .catch(e => console.log(e));
     }
   }
 
   const handlePostDelete = () => {
-    if (confirm('살까말까를 삭제하면 더이상 사라마라를 받을 수 없어요')) {
+    if (confirm('살까말까를 삭제하면 더이상 사라마라를 받을 수 없어요.')) {
       axios
         .delete(process.env.REACT_APP_API_ENDPOINT + '/posts/' + props.postId,
           {
@@ -40,7 +41,7 @@ export default function PostButtonCenter(props) {
         )
         .then(res => {
           if (pathName === '/search' || pathName === '/main') {
-            history.push('/');
+            window.location.reload();
           }
           else if (pathName === `/users/${userId}`) {
             if (props.isOpen) {
@@ -59,39 +60,14 @@ export default function PostButtonCenter(props) {
       return;
     }
   }
-
-  const handlePostClose = () => {
-    if (confirm('살까말까를 닫으면 더이상 사라마라를 받을 수 없어요')) {
-      axios
-        .patch(process.env.REACT_APP_API_ENDPOINT + '/posts/' + props.postId, {},
-          {
-            headers: {
-              'Authorization': `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-            },
-            withCredentials: true,
-          }
-        )
-        .then(res => {
-          if (pathName === '/search' || pathName === '/main') {
-            history.push('/');
-          } else if (pathName === `/users/${userId}`) {
-            const ps = openPosts.slice();
-            ps.splice(ps.indexOf(props.postId), 1);
-            dispatch(setPosts(ps));
-            dispatch(setClosed([...closedPosts, props.postId]));
-            window.location.reload(false);
-          }
-        })
-        .catch(e => refreshtoken(e));
-    } else {
-      return;
-    }
+  const handleOpenClosemodal = () => {
+    props.setCloseState(true)
+    props.setDisplayCommentModal(true)
   }
 
   const handleBookmark = () => {
     if (!isSignIn) {
-      alert('로그인이 필요한 기능이에요');
+      dispatch(setAlertOpen(true, '로그인이 필요한 기능이에요.'))
       return;
     }
     axios
@@ -108,7 +84,7 @@ export default function PostButtonCenter(props) {
         }
       )
       .then(res => {
-        alert(res.data);
+        dispatch(setAlertOpen(true, res.data))
         dispatch(setBookmarks([...bookmarks, props.postId]));
       })
       .catch(e => refreshtoken(e));
@@ -126,7 +102,7 @@ export default function PostButtonCenter(props) {
         }
       )
       .then(res => {
-        alert(res.data);
+        dispatch(setAlertOpen(true, res.data))
         const bms = bookmarks.slice();
         bms.splice(bms.indexOf(props.postId), 1);
         dispatch(setBookmarks(bms));
@@ -137,7 +113,7 @@ export default function PostButtonCenter(props) {
   if (userId === props.userId) { // 내 글: 닫기+삭제 or 삭제
     if (props.isOpen) {
       return (<div className='post-btn-center'>
-        <button onClick={handlePostClose}>닫기</button>
+        <button onClick={handleOpenClosemodal}>닫기</button>
         <FontAwesomeIcon icon={faTrashAlt} onClick={handlePostDelete} />
       </div>)
     } else {

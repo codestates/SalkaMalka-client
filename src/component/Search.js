@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import { setQueryString } from '../actions/index'
+import { setQueryString, setAlertOpen } from '../actions/index'
 import { useDispatch, useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -11,10 +11,11 @@ export default function Search() {
   const pathName = window.location.pathname;
   const dispatch = useDispatch();
   const history = useHistory();
+
   function handleSearch(e) {
     const queryString = document.querySelector('#search-input').value
     if (!queryString.length) {
-      alert('검색어를 입력해주세요');
+      dispatch(setAlertOpen(true, '검색어를 입력해주세요.'))
       return;
     }
     const encoded = encodeURI(encodeURIComponent(queryString));
@@ -26,7 +27,7 @@ export default function Search() {
     return (
       <div className='search-bar'>
         <input id="search-input" type="text" />
-        <FontAwesomeIcon icon={faSearch} onClick={handleSearch}/>
+        <FontAwesomeIcon icon={faSearch} onClick={handleSearch} />
       </div>
     )
   } else if (pathName === `/users/${userId}`) {
@@ -39,7 +40,7 @@ export default function Search() {
     return (
       <div className='search-bar hidden'>
         <input id="search-input" type="text" />
-        <FontAwesomeIcon icon={faSearch} onClick={handleSearch}/>
+        <FontAwesomeIcon icon={faSearch} onClick={handleSearch} />
       </div>
     )
   }
