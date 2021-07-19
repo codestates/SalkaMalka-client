@@ -59,6 +59,7 @@
 |도하영|Team Lead, Full-stack|[sparklingwater226](https://github.com/sparklingwater226)|
 |조양권|Team Member, Front-end|[whdid502](https://github.com/whdid502)|
 |정상규|Team Member, Back-end|[johnbunnyan](https://github.com/johnbunnyan)|
-
+<br/>
+<br/>
 <hr/>   
 Since 2021 by ©Troika, Inc.  
